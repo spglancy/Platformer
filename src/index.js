@@ -19,14 +19,14 @@ var config = {
 };
 
 var player;
-var enemy;
 var platforms;
 var cursors;
 var score = 0;
 var scoreText;
 var scaler;
-var bombs;
 var oldScore = 0;
+var water;
+var oldY = 4450
 
 var game = new Phaser.Game(config);
 
@@ -34,41 +34,45 @@ function preload ()
 {
     this.load.image('sky', 'assets/sky.png');
     this.load.image('ground', 'assets/platform.png');
-    this.load.image('star', 'assets/star.png');
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
 }
 
 function create ()
 {
-    this.add.image(400, 300, 'sky');
     this.jumps = 2;
     this.jump = true;
 
+    this.physics.world.setBounds(0, 0, 800, 5000)
+
 
     platforms = this.physics.add.staticGroup();
-    bombs = this.physics.add.group();
-    player = this.physics.add.sprite(400, 450, 'dude');
-    enemy = this.physics.add.sprite(600, 450, 'dude');
-    scaler = this.physics.add.sprite(400, 450, 'dude');
+    water = this.physics.add.sprite(400, 4900, 'sky');
+    player = this.physics.add.sprite(400, 4450, 'dude');
+    scaler = this.physics.add.sprite(400, 4450, 'dude');
     scaler.alpha = 0;
     scaler.body.allowGravity = false;
+    water.body.allowGravity = false;
+    water.setVelocityY(-50);
 
-    this.cameras.main.startFollow(scaler, true, .1, .1, 0, 150);
+    this.cameras.main.startFollow(scaler, true, .1, .1, 0, 0);
+    let a = 4400;
+    let c = 4280;
+    let x = 50;
+    let y = 650
+    for(let i=0; i < 50; i++){
+        platforms.create(x, a, 'ground');
+        platforms.create(y, c, 'ground');
+        a -= Math.ceil(120 + Math.random() * 90);
+        x = Math.ceil(50 + Math.random() * 140)
+        y = x + 620
+        c -= Math.ceil(130 + Math.random() * 90);
+    }
+    platforms.create(400, 4568, 'ground').setScale(2).refreshBody();
+    platforms.create(400, 4620, 'ground').setScale(2).refreshBody();
+    platforms.create(400, 4680, 'ground').setScale(2).refreshBody();
 
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-    platforms.create(400, 620, 'ground').setScale(2).refreshBody();
-    platforms.create(400, 680, 'ground').setScale(2).refreshBody();
-
-    platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
-
-    player.setBounce(0.1);
     player.setCollideWorldBounds(true);
 
-    enemy.setBounce(0.1);
-    enemy.setCollideWorldBounds(true);
 
     this.anims.create({
         key: 'left',
@@ -93,32 +97,28 @@ function create ()
     cursors = this.input.keyboard.createCursorKeys();
 
     this.physics.add.collider(player, platforms);
-    this.physics.add.collider(enemy, platforms);
-    this.physics.add.collider(bombs, platforms);
-    this.physics.add.collider(player, bombs, gameOver, null, this);
-    this.physics.add.collider(player, enemy, gameOver, null, this);
+    this.physics.add.collider(player, water, gameOver, null, this);
 
-    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#fff' }).setScrollFactor(0);
 }
 
-function goal(){
-    var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-    var bomb = bombs.create(x, 16, 'bomb');
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 30);
-    bomb.allowGravity = false;
+function fade(){
+ setInterval(function(){
+
+ }, 100)
 }
 
 function update ()
 {
     oldScore = score;
-    score = 0 - (Math.ceil(player.y) - 512);
+    score = 0 - (Math.ceil(player.y) - 4500);
     if(score > oldScore){
         scoreText.setText('Score: ' + score);
     }
+    if(player.y < oldY){
+        scaler.y = player.y;
+    }
 
-    scaler.y = player.y;
     if(player.body.touching.down){
         this.jumps = 2;
         if(cursors.up.isDown){
