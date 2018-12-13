@@ -42,24 +42,25 @@ function create ()
     this.jumps = 2;
     this.jump = true;
 
-    this.physics.world.setBounds(0, 0, 800, 5000)
+    this.physics.world.setBounds(0, 0, 800, 20000)
 
 
     platforms = this.physics.add.staticGroup();
-    water = this.physics.add.sprite(400, 4900, 'sky');
+    water = this.physics.add.sprite(400, 5000, 'sky');
     player = this.physics.add.sprite(400, 4450, 'dude');
     scaler = this.physics.add.sprite(400, 4450, 'dude');
     scaler.alpha = 0;
     scaler.body.allowGravity = false;
     water.body.allowGravity = false;
-    water.setVelocityY(-50);
+    water.setVelocityY(-75);
+    water.depth =  10
 
     this.cameras.main.startFollow(scaler, true, .1, .1, 0, 0);
     let a = 4400;
     let c = 4280;
     let x = 50;
     let y = 650
-    for(let i=0; i < 50; i++){
+    for(let i=0; i < 100; i++){
         platforms.create(x, a, 'ground');
         platforms.create(y, c, 'ground');
         a -= Math.ceil(120 + Math.random() * 90);
