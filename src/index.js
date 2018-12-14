@@ -42,7 +42,7 @@ function create ()
     this.jumps = 2;
     this.jump = true;
 
-    this.physics.world.setBounds(0, 0, 800, 20000)
+    this.physics.world.setBounds(0, 0, 800, 5000)
 
 
     platforms = this.physics.add.staticGroup();
@@ -131,7 +131,7 @@ function update ()
     if(cursors.up.isDown && this.jumps > 0){
         if(this.jump){
             if(this.jumps > 0){
-                    player.setVelocity(-400);
+                    player.setVelocity(-450);
                     this.jumps -= 1;
                     this.jump = false;
             }
@@ -169,7 +169,7 @@ function gameOver (player)
 
     player.anims.play('turn');
 
-    this.add.text(300, 200, 'Game Over', { fontSize: '64px', fill: '#000'});
+    this.add.text(250, 200, 'Game Over', { fontSize: '64px', fill: '#fff'}).setScrollFactor(0);
 
     gameOver = true;
 }
